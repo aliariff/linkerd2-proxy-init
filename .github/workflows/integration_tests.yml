@@ -50,7 +50,7 @@ jobs:
     - name: Setup k3d
       run: curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | TAG=v1.7.0 bash
     - name: Forward Docker socket over SSH
-      # Currently k3d does not support remove docker connection using env DOCKER_HOST=ssh://
+      # Currently k3d does not support remote docker connection using env DOCKER_HOST=ssh://
       # Ref: https://github.com/rancher/k3d/issues/74
       run: |
         ssh -nNTf -L $HOME/docker.sock:/var/run/docker.sock arm64-linkerd-docker
