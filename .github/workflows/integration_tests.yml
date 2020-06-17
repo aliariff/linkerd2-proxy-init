@@ -47,3 +47,11 @@ jobs:
         echo "${{ secrets.DOCKER_PRIVATE_KEY }}" > ~/.ssh/id
         echo "${{ secrets.DOCKER_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
         ssh arm64-linkerd-docker docker version
+    - name: Setup k3d
+      run: curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | TAG=v1.7.0 bash
+    - name: Forward Docker socket over SSH
+      # Currently k3d does not support remove docker connection using env DOCKER_HOST=ssh://
+      # Ref: https://github.com/rancher/k3d/issues/74
+      run: |
+        ssh -nNTf -L $HOME/docker.sock:/var/run/docker.sock arm64-linkerd-docker
+        DOCKER_HOST=unix://$HOME/docker.sock k3d check-tools
