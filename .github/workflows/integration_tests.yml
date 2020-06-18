@@ -79,4 +79,5 @@ jobs:
         cd integration_test
         SKIP_BUILD_TESTER_IMAGE=1 ./run_tests.sh
     - name: Cleanup
+      if: always()
       run: k3d delete cluster $CLUSTER_NAME
