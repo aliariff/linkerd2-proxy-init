@@ -48,21 +48,18 @@ jobs:
         echo "${{ secrets.DOCKER_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
         ssh arm64-linkerd-docker docker version
     - name: Install k3d
-      run: curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | TAG=v1.7.0 bash
+      run: curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | TAG=v3.0.0-rc.5 bash
     - name: Forward Docker socket over SSH
       # Currently k3d does not support remote docker connection using env DOCKER_HOST=ssh://
       # Ref: https://github.com/rancher/k3d/issues/74
       run: |
         ssh -nNTf -L $HOME/docker.sock:/var/run/docker.sock arm64-linkerd-docker
-        DOCKER_HOST=unix://$HOME/docker.sock k3d check-tools
         echo ::set-env name=DOCKER_HOST::unix://$(echo $HOME)/docker.sock
     - name: Setup cluster (remote)
       run: |
         export CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
         echo ::set-env name=CLUSTER_NAME::$CLUSTER_NAME
-        k3d create cluster --name $CLUSTER_NAME --wait 300
-        export KUBECONFIG="$(k3d get-kubeconfig --name=$CLUSTER_NAME)"
-        echo ::set-env name=KUBECONFIG::$KUBECONFIG
+        k3d create cluster $CLUSTER_NAME --switch
 
         # Forward local port to connect to remote server for accessing kubectl
         export PORT=$(kubectl config view --minify | grep server | cut -f 4 -d ":")
@@ -75,11 +72,11 @@ jobs:
         docker build -t buoyantio/iptables-tester:v1 -f integration_test/iptables/Dockerfile-tester ./integration_test
     - name: Load image into the k3d cluster
       run: |
-        k3d import-images --name $CLUSTER_NAME gcr.io/linkerd-io/proxy-init:latest buoyantio/iptables-tester:v1
+        k3d load image gcr.io/linkerd-io/proxy-init:latest buoyantio/iptables-tester:v1 -c $CLUSTER_NAME
     - name: Run integration tests
       run: |
         cd integration_test
         SKIP_BUILD_TESTER_IMAGE=1 ./run_tests.sh
     - name: Cleanup
       if: always()
-      run: k3d delete cluster --name $CLUSTER_NAME
+      run: k3d delete cluster $CLUSTER_NAME
