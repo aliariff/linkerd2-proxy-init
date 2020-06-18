@@ -57,6 +57,7 @@ jobs:
       run: |
         ssh -nNTf -L $HOME/docker.sock:/var/run/docker.sock arm64-linkerd-docker
         echo ::set-env name=DOCKER_HOST::unix://$(echo $HOME)/docker.sock
+        DOCKER_HOST=unix://$HOME/docker.sock docker version
     - name: Setup cluster (remote)
       run: |
         export CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
@@ -65,7 +66,7 @@ jobs:
 
         # Forward local port to connect to remote server for accessing kubectl
         export PORT=$(kubectl config view --minify | grep server | cut -f 4 -d ":")
-        ssh -Nf -L $PORT:127.0.0.1:$PORT arm64-linkerd-docker
+        ssh -nNTf -L $PORT:127.0.0.1:$PORT arm64-linkerd-docker
 
         kubectl cluster-info
     - name: Docker build
