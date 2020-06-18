@@ -54,14 +54,16 @@ jobs:
       # Ref: https://github.com/rancher/k3d/issues/74
       run: |
         ssh -nNTf -L $HOME/docker.sock:/var/run/docker.sock arm64-linkerd-docker
+        DOCKER_HOST=unix://$HOME/docker.sock k3d check-tools
         echo '::set-env name=DOCKER_HOST::unix://$HOME/docker.sock'
-        echo $DOCKER_HOST
-        k3d check-tools
     - name: Setup cluster (remote)
       run: |
-        echo '::set-env name=CLUSTER_NAME::${GITHUB_SHA::7}-${{ github.run_id }}'
+        echo $DOCKER_HOST
+        CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
+        echo '::set-env name=CLUSTER_NAME::$CLUSTER_NAME'
         k3d create cluster --name $CLUSTER_NAME --wait 300
-        echo '::set-env name=KUBECONFIG::$(k3d get-kubeconfig --name=$CLUSTER_NAME)'
+        KUBECONFIG="$(k3d get-kubeconfig --name=$CLUSTER_NAME)"
+        echo '::set-env name=KUBECONFIG::$KUBECONFIG'
 
         # Forward local port to connect to remote server for accessing kubectl
         kubectl config view --minify | grep server
