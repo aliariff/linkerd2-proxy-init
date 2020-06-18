@@ -43,6 +43,7 @@ jobs:
       run: |
         pwd
         echo ~
+        echo $HOME
         mkdir -p ~/.ssh/
         touch ~/.ssh/id && chmod 600 ~/.ssh/id
         echo "${{ secrets.DOCKER_SSH_CONFIG }}"  > ~/.ssh/config
@@ -61,6 +62,7 @@ jobs:
       env:
         DOCKER_HOST: unix://$HOME/docker.sock
       run: |
+        ls $HOME
         export CLUSTER_NAME=${{ github.sha }}-${{ github.run_id }}
         k3d create cluster $CLUSTER_NAME --wait 300
         export KUBECONFIG="$(k3d get-kubeconfig --name=$CLUSTER_NAME)"
