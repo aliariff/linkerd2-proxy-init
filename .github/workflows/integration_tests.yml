@@ -41,6 +41,8 @@ jobs:
       uses: actions/checkout@722adc6
     - name: Setup SSH config for Packet
       run: |
+        pwd
+        echo ~
         mkdir -p ~/.ssh/
         touch ~/.ssh/id && chmod 600 ~/.ssh/id
         echo "${{ secrets.DOCKER_SSH_CONFIG }}"  > ~/.ssh/config
