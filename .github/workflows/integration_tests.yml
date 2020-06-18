@@ -58,7 +58,7 @@ jobs:
         echo ::set-env name=DOCKER_HOST::unix://$(echo $HOME)/docker.sock
     - name: Setup cluster (remote)
       run: |
-        CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
+        export CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
         echo ::set-env name=CLUSTER_NAME::$CLUSTER_NAME
         k3d create cluster --name $CLUSTER_NAME --wait 300
         export KUBECONFIG="$(k3d get-kubeconfig --name=$CLUSTER_NAME)"
@@ -66,7 +66,7 @@ jobs:
 
         # Forward local port to connect to remote server for accessing kubectl
         kubectl config view --minify | grep server | cut -f 4 -d ":"
-        PORT=kubectl config view --minify | grep server | cut -f 4 -d ":"
+        export PORT=kubectl config view --minify | grep server | cut -f 4 -d ":"
         ssh -Nf -L $PORT:127.0.0.1:$PORT arm64-linkerd-docker
 
         kubectl cluster-info
