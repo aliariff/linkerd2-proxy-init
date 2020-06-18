@@ -59,10 +59,10 @@ jobs:
     - name: Setup cluster (remote)
       run: |
         CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
-        echo '::set-env name=CLUSTER_NAME::$CLUSTER_NAME'
+        echo ::set-env name=CLUSTER_NAME::$CLUSTER_NAME
         k3d create cluster --name $CLUSTER_NAME --wait 300
         KUBECONFIG="$(k3d get-kubeconfig --name=$CLUSTER_NAME)"
-        echo '::set-env name=KUBECONFIG::$KUBECONFIG'
+        echo ::set-env name=KUBECONFIG::$KUBECONFIG
 
         # Forward local port to connect to remote server for accessing kubectl
         kubectl config view --minify | grep server
