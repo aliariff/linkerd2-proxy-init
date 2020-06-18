@@ -65,7 +65,7 @@ jobs:
         echo ::set-env name=KUBECONFIG::$KUBECONFIG
 
         # Forward local port to connect to remote server for accessing kubectl
-        kubectl config view --minify | grep server
+        kubectl config view --minify | grep server | cut -f 4 -d ":"
         PORT=kubectl config view --minify | grep server | cut -f 4 -d ":"
         ssh -Nf -L $PORT:127.0.0.1:$PORT arm64-linkerd-docker
 
