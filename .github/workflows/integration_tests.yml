@@ -57,7 +57,7 @@ jobs:
       run: |
         ssh -nNTf -L $HOME/docker.sock:/var/run/docker.sock arm64-linkerd-docker
         echo ::set-env name=DOCKER_HOST::unix://$(echo $HOME)/docker.sock
-        DOCKER_HOST=unix://$(echo $HOME)/docker.sock docker version
+        DOCKER_HOST=unix://$HOME/docker.sock docker version
     - name: Setup cluster (remote)
       run: |
         export CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
