@@ -55,7 +55,7 @@ jobs:
       run: |
         ssh -nNTf -L $HOME/docker.sock:/var/run/docker.sock arm64-linkerd-docker
         DOCKER_HOST=unix://$HOME/docker.sock k3d check-tools
-        echo '::set-env name=DOCKER_HOST::unix://$(echo $HOME)/docker.sock'
+        echo ::set-env name=DOCKER_HOST::unix://$(echo $HOME)/docker.sock
     - name: Setup cluster (remote)
       run: |
         CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
