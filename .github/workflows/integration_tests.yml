@@ -48,7 +48,9 @@ jobs:
         echo "${{ secrets.DOCKER_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
         ssh arm64-linkerd-docker docker version
     - name: Install k3d
-      run: curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | TAG=v3.0.0-rc.5 bash
+      run: |
+        curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | TAG=v3.0.0-rc.5 bash
+        k3d version
     - name: Forward Docker socket over SSH
       # Currently k3d does not support remote docker connection using env DOCKER_HOST=ssh://
       # Ref: https://github.com/rancher/k3d/issues/74
