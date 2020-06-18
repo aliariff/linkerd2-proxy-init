@@ -62,7 +62,7 @@ jobs:
       env:
         DOCKER_HOST: unix://$HOME/docker.sock
       run: |
-        export CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
+        export CLUSTER_NAME=${{ github.run_id }}
         k3d create cluster --name $CLUSTER_NAME --wait 300
         export KUBECONFIG="$(k3d get-kubeconfig --name=$CLUSTER_NAME)"
 
