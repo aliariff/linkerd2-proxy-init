@@ -41,9 +41,6 @@ jobs:
       uses: actions/checkout@722adc6
     - name: Setup SSH config for Packet
       run: |
-        pwd
-        echo ~
-        echo $HOME
         mkdir -p ~/.ssh/
         touch ~/.ssh/id && chmod 600 ~/.ssh/id
         echo "${{ secrets.DOCKER_SSH_CONFIG }}"  > ~/.ssh/config
@@ -57,13 +54,12 @@ jobs:
       # Ref: https://github.com/rancher/k3d/issues/74
       run: |
         ssh -nNTf -L $HOME/docker.sock:/var/run/docker.sock arm64-linkerd-docker
-        DOCKER_HOST=unix://$HOME/docker.sock k3d check-tools
+        export DOCKER_HOST=unix://$HOME/docker.sock
+        k3d check-tools
     - name: Setup cluster (remote)
-      env:
-        DOCKER_HOST: unix://$HOME/docker.sock
       run: |
-        export CLUSTER_NAME=${{ github.run_id }}
-        DOCKER_HOST=unix://$HOME/docker.sock k3d create cluster --name $CLUSTER_NAME --wait 300
+        export CLUSTER_NAME=${GITHUB_SHA::7}-${{ github.run_id }}
+        k3d create cluster --name $CLUSTER_NAME --wait 300
         export KUBECONFIG="$(k3d get-kubeconfig --name=$CLUSTER_NAME)"
 
         # Forward local port to connect to remote server for accessing kubectl
@@ -72,8 +68,6 @@ jobs:
 
         kubectl cluster-info
     - name: Docker build
-      env:
-        DOCKER_HOST: unix://$HOME/docker.sock
       run: |
         docker build -t gcr.io/linkerd-io/proxy-init:latest .
         docker build -t buoyantio/iptables-tester:v1 -f integration_test/iptables/Dockerfile-tester ./integration_test
@@ -82,6 +76,4 @@ jobs:
         cd integration_test
         SKIP_BUILD_TESTER_IMAGE=1 ./run_tests.sh
     - name: Cleanup
-      env:
-        DOCKER_HOST: unix://$HOME/docker.sock
       run: k3d delete cluster $CLUSTER_NAME
