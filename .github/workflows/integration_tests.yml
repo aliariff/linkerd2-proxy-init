@@ -74,6 +74,9 @@ jobs:
       run: |
         docker build -t gcr.io/linkerd-io/proxy-init:latest .
         docker build -t buoyantio/iptables-tester:v1 -f integration_test/iptables/Dockerfile-tester ./integration_test
+    - name: Load image into the k3d cluster
+      run: |
+        k3d import-images --name $CLUSTER_NAME gcr.io/linkerd-io/proxy-init:latest buoyantio/iptables-tester:v1
     - name: Run integration tests
       run: |
         cd integration_test
