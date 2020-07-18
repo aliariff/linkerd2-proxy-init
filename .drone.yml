@@ -1,13 +1,20 @@
+---
 kind: pipeline
-type: docker
 name: default
 
 platform:
-  os: linux
   arch: arm64
 
 steps:
-- name: greeting
-  image: alpine
+- name: test
+  image: docker:dind
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
   commands:
-  - uname -a
+  - docker ps -a
+
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
