@@ -1,10 +1,14 @@
+---
 kind: pipeline
-type: docker
+type: exec
 name: default
+
+platform:
+  os: linux
+  arch: arm64
 
 steps:
 - name: greeting
-  image: alpine
   commands:
-  - echo hello
-  - echo world
+  - uname -a
+  - docker info
