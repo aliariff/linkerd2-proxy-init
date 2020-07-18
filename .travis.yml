@@ -11,6 +11,8 @@ jobs:
 
     - stage: test
       name: Integration tests
+      services:
+        - docker
       install:
         - curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | TAG=v3.0.0 bash
         - k3d version
