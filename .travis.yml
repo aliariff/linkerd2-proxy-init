@@ -13,7 +13,7 @@ jobs:
       name: Integration tests
       install:
         - curl -sfL https://get.k3s.io | sh -
-        - kubectl get nodes
+        - sudo kubectl get nodes
       # before_script:
       #   - |
       #     # Create cluster
