@@ -1,3 +1,6 @@
+ARG BUILDPLATFORM=linux/arm64
+ARG TARGETPLATFORM=linux/arm64
+
 ## compile proxy-init utility
 FROM --platform=$BUILDPLATFORM golang:1.12.9 as golang
 WORKDIR /build

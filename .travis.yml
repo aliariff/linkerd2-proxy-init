@@ -24,4 +24,3 @@ jobs:
           k3d image import gcr.io/linkerd-io/proxy-init:latest buoyantio/iptables-tester:v1
       script:
         - SKIP_BUILD_TESTER_IMAGE=1 make integration-test
-

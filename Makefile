@@ -42,7 +42,7 @@ integration-test: image ## Perform integration test
 ###############
 .PHONY: image
 image: ## Build docker image for the project
-	DOCKER_BUILDKIT=1 docker build -t $(REPO):latest .
+	docker build -t $(REPO):latest .
 
 .PHONY: tester-image
 tester-image: ## Build docker image for the tester component
