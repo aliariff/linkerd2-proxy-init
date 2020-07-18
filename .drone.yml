@@ -5,10 +5,9 @@ name: default
 
 platform:
   os: linux
-  arch: arm64
+  arch: amd64
 
 steps:
 - name: greeting
   commands:
-  - uname -a
-  - docker info
+  - echo hello world
